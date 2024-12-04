@@ -1,9 +1,10 @@
 import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import "firebase/compat/storage";
+import "firebase/compat/database";
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, collection, getDocs, query, where } from "firebase/firestore";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyBvWeRTcluug1-W-Gx8sabzel0z7N2AGKg",
@@ -15,11 +16,12 @@ const firebaseConfig = {
   measurementId: "G-R4GZZX3RPS"
 };
 
-firebase.initializeApp(firebaseConfig);
-const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app); // for user login 
-export const firestore = firebase.firestore();
-export const auth = firebase.auth();
-export const storage = firebase.storage(); // Export the 'storage' module
-// export const UserAuth = getAuth(app); // for user
+// const app = firebase.initializeApp(firebaseConfig);
+// export const database = app.database();
+// firebase.initializeApp(firebaseConfig);
+
 export default firebase;
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+export { db, collection, getDocs, query, where };
