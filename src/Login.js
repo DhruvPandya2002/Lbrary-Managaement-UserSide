@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { db, collection, getDocs, query, where } from "./firebase";
+import { Celebration } from "@mui/icons-material";
 
 const Login = ({ setUser }) => {
   const [usn, setUsn] = useState("");
@@ -61,6 +62,7 @@ const Login = ({ setUser }) => {
         justifyContent: "center",
         alignItems: "center",
         height: "83.5vh",
+        textAlign: "center",
         backgroundColor: "background.default", // Using theme background color
       }}
     >
@@ -101,7 +103,7 @@ const Login = ({ setUser }) => {
               {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}
             </Button>
           </form>
-          <Typography variant="h8" gutterBottom align="center">
+          <Typography variant="h8" gutterBottom align="center"style={{ textAlign:"center" }}>
             Enter Usn 23MCAR0054 for login
           </Typography>
         </CardContent>
@@ -109,8 +111,4 @@ const Login = ({ setUser }) => {
     </Box>
   );
 };
-
 export default Login;
-
-// ************************************************************************************************************************************************************
-
