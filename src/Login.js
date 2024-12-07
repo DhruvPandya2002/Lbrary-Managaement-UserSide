@@ -65,6 +65,9 @@ const Login = ({ setUser }) => {
       }}
     >
       <Card sx={{ maxWidth: 400, width: "100%", p: 2, boxShadow: 3 }}>
+      <marquee width="100%" direction="left" height="auto">
+        This Project is Currently in Development Phase
+      </marquee>  
         <CardContent>
           <Typography variant="h4" gutterBottom align="center">
             Student Login
