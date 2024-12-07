@@ -98,6 +98,9 @@ const Login = ({ setUser }) => {
               {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}
             </Button>
           </form>
+          <Typography variant="h8" gutterBottom align="center">
+            Enter Usn 23MCAR0054 for login
+          </Typography>
         </CardContent>
       </Card>
     </Box>

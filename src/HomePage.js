@@ -146,6 +146,9 @@ const App = () => {
   return (
     <Container maxWidth="sm" style={{ marginTop: "3rem" }}>
       <Box textAlign="center" mb={3}>
+        <marquee width="100%" direction="left" height="100px">
+          This Project is Currently in Development Phase
+        </marquee>
         <Typography variant="h4" gutterBottom color="primary">
           Library Search
         </Typography>
@@ -223,7 +226,11 @@ const App = () => {
                   alt={book.title}
                   height="140px" // You can adjust the height of the image as needed
                   image={book.url} // Assuming the book data contains an imageURL field
-                  style={{ height: '400px', width: 'auto', marginRight: '10px' }}
+                  style={{
+                    height: "400px",
+                    width: "auto",
+                    marginRight: "10px",
+                  }}
                 />
                 <CardContent>
                   <Typography variant="h6" color="primary" gutterBottom>

@@ -102,7 +102,7 @@ const App = ({ darkMode, toggleTheme }) => {
       >
         <Routes>
           <Route path="/HomePage"element={user ? <HomePage /> : <Login setUser={setUser} />} />          
-          <Route path="/Login" element={<Login setUser={setUser} />} />          
+          <Route path="/" element={<Login setUser={setUser} />} />          
         </Routes>
       </Box>
     </Box>
