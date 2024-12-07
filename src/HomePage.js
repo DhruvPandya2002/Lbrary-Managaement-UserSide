@@ -1,105 +1,4 @@
-// import React, { useState } from "react";
-// import { TextField, MenuItem, Button, Typography, Box, Container, Card, CardContent, CircularProgress } from "@mui/material";
-// import { db, collection, getDocs, query, where } from "./firebase";
-
-// const App = () => {
-//   const [searchType, setSearchType] = useState("");
-//   const [searchText, setSearchText] = useState("");
-//   const [books, setBooks] = useState([]);
-//   const [loading, setLoading] = useState(false);
-
-//   const handleSearch = async () => {
-//     setLoading(true);
-//     setBooks([]); // Clear previous results
-//     try {
-//       const q = query(
-//         collection(db, "books"),
-//         where(searchType, "==", searchText)
-//       );
-//       const querySnapshot = await getDocs(q);
-//       const results = [];
-//       querySnapshot.forEach((doc) => {
-//         results.push(doc.data());
-//       });
-//       setBooks(results);
-//     } catch (error) {
-//       console.error("Error fetching books: ", error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <Container maxWidth="sm" style={{ marginTop: "9vh" }}>
-//       <Box display="flex" justifyContent="center" mb={3} flexDirection="column" alignItems="center">
-//         <TextField
-//           label="Search Books"
-//           variant="outlined"
-//           value={searchText}
-//           onChange={(e) => setSearchText(e.target.value)}
-//           style={{ marginBottom: "1rem", width: "100%" }}
-//         />
-//         <TextField
-//           select
-//           label="Select Type"
-//           value={searchType}
-//           onChange={(e) => setSearchType(e.target.value)}
-//           variant="outlined"
-//           style={{ marginBottom: "1rem", width: "100%" }}
-//         >
-//           <MenuItem value="title">Title</MenuItem>
-//           <MenuItem value="author">Author</MenuItem>
-//           <MenuItem value="genre">Type</MenuItem>
-//         </TextField>
-//         <Button
-//           variant="contained"
-//           color="primary"
-//           onClick={handleSearch}
-//           disabled={loading || !searchText || !searchType}
-//           fullWidth
-//         >
-//           {loading ? <CircularProgress size={24} color="inherit" /> : "Search"}
-//         </Button>
-//       </Box>
-
-//       <Box mt={4}>
-//         {loading && (
-//           <Box display="flex" justifyContent="center" mb={3}>
-//             <CircularProgress />
-//           </Box>
-//         )}
-
-//         {books.length > 0 ? (
-//           books.map((book, index) => (
-//             <Card key={index} variant="outlined" style={{ marginBottom: "1.5rem", borderRadius: "8px" }}>
-//               <CardContent>
-//                 <Typography variant="h6" color="primary" gutterBottom>
-//                   {book.title}
-//                 </Typography>
-//                 <Typography variant="body1" color="textSecondary">
-//                   <strong>Author:</strong> {book.author}
-//                 </Typography>
-//                 <Typography variant="body1" color="textSecondary">
-//                   <strong>Genre:</strong> {book.genre}
-//                 </Typography>
-//               </CardContent>
-//             </Card>
-//           ))
-//         ) : (
-//           !loading && (
-//             <Typography textAlign="center" color="textSecondary">
-//               No results found
-//             </Typography>
-//           )
-//         )}
-//       </Box>
-//     </Container>
-//   );
-// };
-
-// export default App;
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TextField,
   MenuItem,
@@ -112,30 +11,65 @@ import {
   CircularProgress,
   CardMedia,
 } from "@mui/material";
-import { db, collection, getDocs, query, where } from "./firebase";
-
+import { db, collection, getDocs } from "./firebase";
+import Grid from '@mui/material/Grid2';
 const App = () => {
-  const [searchType, setSearchType] = useState("");
-  const [bookType, setBookType] = useState(""); // New state for book type
+  const [bookType, setBookType] = useState("");
   const [searchText, setSearchText] = useState("");
-  const [books, setBooks] = useState([]);
+  const [filteredBooks, setFilteredBooks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [bookTypes, setBookTypes] = useState([]);
+  const [searched, setSearched] = useState(false);
 
+  // Fetching book types
+  useEffect(() => {
+    const fetchBookTypes = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "books"));
+        const types = new Set(
+          querySnapshot.docs.map((doc) => doc.data().type).filter(Boolean)
+        );
+        setBookTypes([...types]); 
+      } catch (error) {
+        console.error("Error fetching book types: ", error);
+      }
+    };
+
+    fetchBookTypes();
+  }, []);
+
+  // search Book
   const handleSearch = async () => {
+    if (!bookType && !searchText.trim()) {
+      alert("Please provide either a search text or select a book type.");
+      return;
+    }
+
     setLoading(true);
-    setBooks([]); // Clear previous results
+    setSearched(true);
     try {
-      const q = query(
-        collection(db, "books"),
-        where(searchType, "==", searchText)
-        // where("type", "==", bookType) // Filtering by book type as well
-      );
-      const querySnapshot = await getDocs(q);
-      const results = [];
-      querySnapshot.forEach((doc) => {
-        results.push(doc.data());
-      });
-      setBooks(results);
+      const querySnapshot = await getDocs(collection(db, "books"));
+      const results = querySnapshot.docs
+        .map((doc) => doc.data())
+        .filter((book) => {
+          const matchesType = bookType ? book.type === bookType : true;
+          const matchesSearch =
+            !searchText.trim() ||
+            [
+              book.title,
+              book.author,
+              book.publisher,
+              book.ISBN,
+              ...(book.tags || []),
+            ]
+              .filter(Boolean)
+              .some((field) =>
+                field.toLowerCase().includes(searchText.toLowerCase())
+              );
+          return matchesType && matchesSearch;
+        });
+
+      setFilteredBooks(results);
     } catch (error) {
       console.error("Error fetching books: ", error);
     } finally {
@@ -144,11 +78,8 @@ const App = () => {
   };
 
   return (
-    <Container maxWidth="sm" style={{ marginTop: "3rem" }}>
-      <Box textAlign="center" mb={3}>
-        <marquee width="100%" direction="left" height="100px">
-          This Project is Currently in Development Phase
-        </marquee>
+    <Container style={{ marginTop: "3rem" }} maxWidth="xl">
+      <Box textAlign="center" mb={3} mt={8}>
         <Typography variant="h4" gutterBottom color="primary">
           Library Search
         </Typography>
@@ -156,106 +87,122 @@ const App = () => {
 
       <Box
         display="flex"
-        justifyContent="center"
-        mb={3}
-        flexDirection="column"
+        flexDirection="row"
         alignItems="center"
+        justifyContent="space-between"
+        paddingLeft="150px"
+        paddingRight="150px"
       >
         <TextField
-          label="Search Books"
+          label="Search Books, Authors, Publishers or ISBN"
           variant="outlined"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
-          style={{ marginBottom: "1rem", width: "100%" }}
+          style={{ width: "350px" }}
         />
-        <Box display="flex" justifyContent="space-between" width="100%">
-          <TextField
-            select
-            label="Select Field"
-            value={searchType}
-            onChange={(e) => setSearchType(e.target.value)}
-            variant="outlined"
-            style={{ marginBottom: "1rem", width: "48%" }}
-          >
-            <MenuItem value="title">Title</MenuItem>
-            <MenuItem value="author">Author</MenuItem>
-            <MenuItem value="genre">ISBN</MenuItem>
-          </TextField>
-
-          <TextField
-            select
-            label="Select Type"
-            value={bookType}
-            onChange={(e) => setBookType(e.target.value)}
-            variant="outlined"
-            style={{ marginBottom: "1rem", width: "48%" }}
-          >
-            <MenuItem value="General">General</MenuItem>
-            <MenuItem value="Reference">Reference</MenuItem>
-            <MenuItem value="ResearchPaper">Research Paper</MenuItem>
-          </TextField>
-        </Box>
-
+        <TextField
+          select
+          label="Select Type"
+          value={bookType}
+          onChange={(e) => setBookType(e.target.value)}
+          variant="outlined"
+          style={{ width: "350px" }}
+        >
+          {bookTypes.length > 0 ? (
+            bookTypes.map((type, index) => (
+              <MenuItem key={index} value={type}>
+                {type}
+              </MenuItem>
+            ))
+          ) : (
+            <MenuItem disabled>Loading...</MenuItem>
+          )}
+        </TextField>
         <Button
           variant="contained"
           color="primary"
           onClick={handleSearch}
-          disabled={loading || !searchText || !searchType} // Disable until all fields are selected
-          fullWidth
+          disabled={loading}
+          style={{ width: "350px", height: "56px", fontSize: "16px" }}
         >
-          {loading ? <CircularProgress size={24} color="inherit" /> : "Search"}
+          {loading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            "Filter by Type"
+          )}
         </Button>
       </Box>
 
-      <Box mt={4}>
-        {loading && (
+      <Box mt={4} display="flex" flexDirection="column" justifyContent="center">
+        {loading ? (
           <Box display="flex" justifyContent="center" mb={3}>
             <CircularProgress />
           </Box>
-        )}
-
-        {books.length > 0
-          ? books.map((book, index) => (
-              <Card
-                key={index}
-                variant="outlined"
-                style={{ marginBottom: "1.5rem", borderRadius: "8px" }}
-              >
-                <CardMedia
-                  component="img"
-                  alt={book.title}
-                  height="140px" // You can adjust the height of the image as needed
-                  image={book.url} // Assuming the book data contains an imageURL field
+        ) : searched && filteredBooks.length === 0 ? (
+          <Typography textAlign="center" color="textSecondary">
+            No results found.
+          </Typography>
+        ) : (
+          <Grid container spacing={2} display="flex" justifyContent="center">
+            {filteredBooks.map((book, index) => (
+              <Grid xs={4} key={index} size={4}>
+                <Card
+                  variant="outlined"
                   style={{
-                    height: "400px",
-                    width: "auto",
-                    marginRight: "10px",
+                    marginBottom: "1.5rem",
+                    borderRadius: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                    border: localStorage.getItem("theme") === "dark" ? "2px solid lightgray" : "2px solid gray"
                   }}
-                />
-                <CardContent>
-                  <Typography variant="h6" color="primary" gutterBottom>
-                    {book.title}
-                  </Typography>
-                  <Typography variant="body1" color="textSecondary">
-                    <strong>Author:</strong> {book.author}
-                  </Typography>
-                  <Typography variant="body1" color="textSecondary">
-                    <strong>ISBN:</strong> {book.ISBN}
-                  </Typography>
-                  <Typography variant="body1" color="textSecondary">
-                    <strong>Type:</strong> {book.type}
-                  </Typography>
-                </CardContent>
-              </Card>
-            ))
-          : !loading && (
-              <Typography textAlign="center" color="textSecondary">
-                No results found
-              </Typography>
-            )}
+                >
+                  <CardMedia
+                    component="img"
+                    alt={book.title}
+                    image={book.url || ""}
+                    style={{
+                      height: "325px",
+                      width: "auto",
+                      padding: "20px",
+                      objectFit: "contain",
+                      display: "flex",
+                      flexDirection: "row",
+                    }}
+                  />
+                  <CardContent>
+                    <Typography
+                      variant="h6"
+                      color="primary"
+                      gutterBottom
+                      sx={{
+                        fontFamily: "Oswald",
+                        fontWeight: "bold",
+                        fontStyle: "italic",
+                        fontSize: "1.5rem",
+                      }}
+                    >
+                      {book.title}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      <strong>Author:</strong> {book.author || "N/A"}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      <strong>Publisher:</strong> {book.publisher || "N/A"}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      <strong>Type:</strong> {book.type || "N/A"}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      <strong>ISBN:</strong> {book.ISBN || "N/A"}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        )}
       </Box>
     </Container>
   );
 };
-
 export default App;
