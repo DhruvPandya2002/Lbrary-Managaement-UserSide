@@ -27,7 +27,7 @@ const App = ({ darkMode, toggleTheme }) => {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     } else {
-      navigate("/Login");
+      navigate("/");
     }
   }, [navigate]);
 
@@ -35,7 +35,7 @@ const App = ({ darkMode, toggleTheme }) => {
   const handleLogout = () => {
     localStorage.removeItem("user");
     setUser(null);
-    navigate("/Login");
+    navigate("/");
   };
 
   if (loading) {
