@@ -3,7 +3,7 @@ import "firebase/compat/firestore";
 import "firebase/compat/storage";
 import "firebase/compat/database";
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, query, where } from "firebase/firestore";
+import { getFirestore, collection, getDocs, query, where, Timestamp, addDoc} from "firebase/firestore";
 
 
 const firebaseConfig = {
@@ -16,12 +16,8 @@ const firebaseConfig = {
   measurementId: "G-R4GZZX3RPS"
 };
 
-// const app = firebase.initializeApp(firebaseConfig);
-// export const database = app.database();
-// firebase.initializeApp(firebaseConfig);
-
 export default firebase;
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-export { db, collection, getDocs, query, where, app };
+export { db, collection, getDocs, query, where, app, Timestamp, addDoc};
