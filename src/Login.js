@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { db, collection, getDocs, query, where } from "./firebase";
-import { Celebration } from "@mui/icons-material";
+// import { Celebration } from "@mui/icons-material";
 
 const Login = ({ setUser }) => {
   const [usn, setUsn] = useState("");
@@ -40,10 +40,10 @@ const Login = ({ setUser }) => {
 
       if (!querySnapshot.empty) {
         setSuccess("USN found! Redirecting...");
-        const user = querySnapshot.docs[0].data(); // Retrieve user details if needed
-        setUser(user); // Set the user in the parent component (App.js)
-        localStorage.setItem("user", JSON.stringify(user)); // Save to localStorage
-        navigate("/HomePage"); // Redirect to the home page
+        const user = querySnapshot.docs[0].data(); 
+        setUser(user); 
+        localStorage.setItem("user", JSON.stringify(user)); 
+        navigate("/HomePage"); 
       } else {
         setError("USN not found. Please check and try again.");
       }
@@ -63,7 +63,7 @@ const Login = ({ setUser }) => {
         alignItems: "center",
         height: "83.5vh",
         textAlign: "center",
-        backgroundColor: "background.default", // Using theme background color
+        backgroundColor: "background.default", 
       }}
     >
       <Card sx={{ maxWidth: 400, width: "100%", p: 2, boxShadow: 3 }}>
@@ -74,8 +74,7 @@ const Login = ({ setUser }) => {
           <Typography variant="h4" gutterBottom align="center">
             Student Login
           </Typography>
-
-          {/* Display error or success message */}
+          
           {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
           {success && <Alert severity="success" sx={{ mt: 2 }}>{success}</Alert>}
 
@@ -96,8 +95,7 @@ const Login = ({ setUser }) => {
               variant="contained"
               color="primary"
               fullWidth
-              sx={{ mt: 3, py: 1.5 }}
-              // disabled={loading}
+              sx={{ mt: 3, py: 1.5 }}              
               disabled={loading || !usn }
             >
               {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}

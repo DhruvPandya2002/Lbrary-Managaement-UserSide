@@ -13,7 +13,7 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import ImageListItem from "@mui/material/ImageListItem";
 import HomePage from "./HomePage";
 import Login from "./Login";
-
+import Checkout from "./Checkout";
 
 const App = ({ darkMode, toggleTheme }) => {
   const [user, setUser] = useState(null);
@@ -101,7 +101,8 @@ const App = ({ darkMode, toggleTheme }) => {
         }}
       >
         <Routes>
-          <Route path="/HomePage"element={user ? <HomePage /> : <Login setUser={setUser} />} />          
+          <Route path="/HomePage"element={user ? <HomePage /> : <Login setUser={setUser} />} />
+          <Route path="/Checkout"element={user ? <Checkout /> : <Login  />} />          
           <Route path="/" element={<Login setUser={setUser} />} />          
         </Routes>
       </Box>

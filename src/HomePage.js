@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   TextField,
   MenuItem,
@@ -12,7 +13,7 @@ import {
   CardMedia,
 } from "@mui/material";
 import { db, collection, getDocs } from "./firebase";
-import Grid from '@mui/material/Grid2';
+import Grid from "@mui/material/Grid2";
 const App = () => {
   const [bookType, setBookType] = useState("");
   const [searchText, setSearchText] = useState("");
@@ -20,6 +21,7 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [bookTypes, setBookTypes] = useState([]);
   const [searched, setSearched] = useState(false);
+  const navigate = useNavigate();
 
   // Fetching book types
   useEffect(() => {
@@ -29,7 +31,7 @@ const App = () => {
         const types = new Set(
           querySnapshot.docs.map((doc) => doc.data().type).filter(Boolean)
         );
-        setBookTypes([...types]); 
+        setBookTypes([...types]);
       } catch (error) {
         console.error("Error fetching book types: ", error);
       }
@@ -38,6 +40,10 @@ const App = () => {
     fetchBookTypes();
   }, []);
 
+  const Checkout = async () => {
+    // to re-direct to CheckOut-page
+    navigate("/HomePage");
+  };
   // search Book
   const handleSearch = async () => {
     if (!bookType && !searchText.trim()) {
@@ -122,7 +128,7 @@ const App = () => {
           variant="contained"
           color="primary"
           onClick={handleSearch}
-          disabled={loading}
+          // disabled={loading}
           style={{ width: "350px", height: "56px", fontSize: "16px" }}
         >
           {loading ? (
@@ -152,50 +158,78 @@ const App = () => {
                     marginBottom: "1.5rem",
                     borderRadius: "8px",
                     display: "flex",
+                    flexDirection: "column",
                     alignItems: "center",
-                    border: localStorage.getItem("theme") === "dark" ? "2px solid lightgray" : "2px solid gray"
+                    border:
+                      localStorage.getItem("theme") === "dark"
+                        ? "2px solid lightgray"
+                        : "2px solid gray",
                   }}
                 >
-                  <CardMedia
-                    component="img"
-                    alt={book.title}
-                    image={book.url || ""}
-                    style={{
-                      height: "325px",
-                      width: "auto",
-                      padding: "20px",
-                      objectFit: "contain",
-                      display: "flex",
-                      flexDirection: "row",
-                    }}
-                  />
-                  <CardContent>
-                    <Typography
-                      variant="h6"
-                      color="primary"
-                      gutterBottom
-                      sx={{
-                        fontFamily: "Oswald",
-                        fontWeight: "bold",
-                        fontStyle: "italic",
-                        fontSize: "1.5rem",
+                  <div style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}>
+                    <CardMedia
+                      component="img"
+                      alt={book.title}
+                      image={book.url || ""}
+                      style={{
+                        height: "300px",
+                        width: "200px",
+                        paddingLeft: "20px",
+                        paddingRight: "20px",
+                        objectFit: "contain",
+                        display: "flex",
+                        flexDirection: "row",
                       }}
-                    >
-                      {book.title}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      <strong>Author:</strong> {book.author || "N/A"}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      <strong>Publisher:</strong> {book.publisher || "N/A"}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      <strong>Type:</strong> {book.type || "N/A"}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      <strong>ISBN:</strong> {book.ISBN || "N/A"}
-                    </Typography>
-                  </CardContent>
+                    />
+                    <CardContent>
+                      <Typography
+                        variant="h6"
+                        color="primary"
+                        gutterBottom
+                        sx={{
+                          fontFamily: "Oswald",
+                          fontWeight: "bold",
+                          fontStyle: "italic",
+                          fontSize: "auto",
+                        }}
+                      >
+                        {book.title}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        <strong>Author:</strong> {book.author || "N/A"}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        <strong>Publisher:</strong> {book.publisher || "N/A"}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        <strong>Type:</strong> {book.type || "N/A"}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        <strong>ISBN:</strong> {book.ISBN || "N/A"}
+                      </Typography>
+                    </CardContent>
+                  </div>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={Checkout}
+                    style={{
+                      width: "95%",
+                      height: "auto",
+                      fontSize: "14px",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    {loading ? (
+                      <CircularProgress size={24} color="inherit" />
+                    ) : (
+                      "CheckOut"
+                    )}
+                  </Button>
                 </Card>
               </Grid>
             ))}
