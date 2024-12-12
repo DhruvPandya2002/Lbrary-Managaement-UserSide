@@ -3,7 +3,7 @@ import "firebase/compat/firestore";
 import "firebase/compat/storage";
 import "firebase/compat/database";
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, query, where, Timestamp, addDoc} from "firebase/firestore";
+import { getFirestore, collection, getDocs, query, where, Timestamp, addDoc, doc, updateDoc, getDoc} from "firebase/firestore";
 
 
 const firebaseConfig = {
@@ -20,4 +20,4 @@ export default firebase;
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-export { db, collection, getDocs, query, where, app, Timestamp, addDoc};
+export { db, collection, getDocs, query, where, app, Timestamp, addDoc, doc, updateDoc, getDoc};

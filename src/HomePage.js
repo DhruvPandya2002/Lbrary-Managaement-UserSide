@@ -225,6 +225,9 @@
                         <Typography variant="body2" color="textSecondary">
                           <strong>ISBN:</strong> {book.ISBN || "N/A"}
                         </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          <strong>Book-Available:</strong> {book.bookavailable || "N/A"}
+                        </Typography>
                       </CardContent>
                     </div>
                     <Button
