@@ -15,12 +15,14 @@ import {
   TablePagination,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useNavigate } from "react-router-dom";
 import { db, collection, addDoc, doc, updateDoc, getDoc, getDocs, Timestamp, query, where } from "./firebase"; // Ensure updateDoc is imported
 
 const Cart = () => {
   const cartItems = JSON.parse(localStorage.getItem("cart")) || [];
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const navigate = useNavigate();
 
   // Handle deletion of a book from the cart
   const handleDelete = (ISBN) => {
@@ -79,8 +81,7 @@ const Cart = () => {
               // Update the book availability in the books collection
               await updateDoc(bookDoc.ref, {
                 bookavailable: newAvailableCount,
-              });
-  
+              });              
               // Optionally, show a success message
               // alert(`Book ${book.title} successfully issued!`);
             } else {
@@ -96,7 +97,8 @@ const Cart = () => {
   
       // Clear cart after checkout
       localStorage.removeItem("cart");
-      window.location.reload(); // Refresh the page to reflect the changes
+      // window.location.reload(); // Refresh the page to reflect the changes
+      navigate("/"); 
     } else {
       alert("Your cart is empty. Please add books to your cart before checking out.");
     }
