@@ -56,7 +56,8 @@ const Cart = () => {
             department: student.department,
             bookTitle: book.title,
             ISBN: book.ISBN,
-            inTime: Timestamp.now(),          
+            inTime: Timestamp.now(),
+            userStatus: "Reading",
           });
   
           // Query the books collection using ISBN to find the book
@@ -81,7 +82,7 @@ const Cart = () => {
               });
   
               // Optionally, show a success message
-              alert(`Book ${book.title} successfully issued!`);
+              // alert(`Book ${book.title} successfully issued!`);
             } else {
               alert(`Sorry, ${book.title} is currently unavailable.`);
             }

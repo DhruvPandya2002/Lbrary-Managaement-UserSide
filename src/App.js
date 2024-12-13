@@ -128,7 +128,7 @@
 //         }}
 //       >
 //         <Routes>
-//           <Route path="/HomePage" element={user ? <HomePage handleCartUpdate={handleCartUpdate} /> : <Login setUser={setUser} />} />      
+//           <Route path="/HomePage" element={user ? <HomePage handleCartUpdate={handleCartUpdate} /> : <Login setUser={setUser} />} />
 //           <Route path="/Cart" element={user ? <Cart handleCartUpdate={handleCartUpdate} /> : <Login />} />
 //           <Route path="/" element={<Login setUser={setUser} />} />
 //         </Routes>
@@ -151,10 +151,10 @@ import {
   useTheme,
   Badge,
 } from "@mui/material";
-import { Route, Routes, useNavigate } from "react-router-dom";
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { Route, Routes, useNavigate, Navigate } from "react-router-dom"; // Ensure Navigate is from react-router-dom
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ImageListItem from "@mui/material/ImageListItem";
-import AlarmAddIcon from '@mui/icons-material/AlarmAdd';
+import AlarmAddIcon from "@mui/icons-material/AlarmAdd";
 import HomePage from "./HomePage";
 import Login from "./Login";
 import Cart from "./Cart";
@@ -173,20 +173,24 @@ const App = ({ darkMode, toggleTheme }) => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
-    } else {
-      navigate("/");
+    } else if (window.location.pathname !== "/Login") {
+      navigate("/"); // Redirect to home only if not already on the login page
     }
-
+    
     // Update cart count on app load
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCartCount(storedCart.length);
   }, [navigate]);
+  
 
   // Logout functionality
   const handleLogout = () => {
     localStorage.removeItem("user");
     setUser(null);
     navigate("/");
+  };
+  const handleLogin = () => {
+    navigate("/Login");
   };
 
   const handleCart = () => {
@@ -248,24 +252,26 @@ const App = ({ darkMode, toggleTheme }) => {
           <Button color="inherit" onClick={toggleTheme}>
             {darkMode ? "Light Mode" : "Dark Mode"}
           </Button>
-          {user && (
-            <>
-              <Button color="inherit" onClick={handleCart}>
-                <Badge
-                  badgeContent={cartCount}
-                  color="secondary"
-                >
-                  <ShoppingCartIcon />
-                </Badge>
-              </Button>
-              <Button color="inherit" onClick={handleReturn}>
-                <AlarmAddIcon/>
-              </Button>
+
+          <>
+            <Button color="inherit" onClick={handleCart}>
+              <Badge badgeContent={cartCount} color="secondary">
+                <ShoppingCartIcon />
+              </Badge>
+            </Button>
+            <Button color="inherit" onClick={handleReturn}>
+              <AlarmAddIcon />
+            </Button>
+            {user ? (
               <Button color="inherit" onClick={handleLogout}>
                 Logout
               </Button>
-            </>
-          )}
+            ) : (
+              <Button color="inherit" onClick={handleLogin}>
+                Login
+              </Button>
+            )}
+          </>
         </Toolbar>
       </AppBar>
 
@@ -278,10 +284,24 @@ const App = ({ darkMode, toggleTheme }) => {
         }}
       >
         <Routes>
-          <Route path="/HomePage" element={user ? <HomePage handleCartUpdate={handleCartUpdate} /> : <Login setUser={setUser} />} />
-          <Route path="/Cart" element={user ? <Cart handleCartUpdate={handleCartUpdate} /> : <Login />} />
-          <Route path="/ReturnBook" element={user ? <ReturnBook /> : <Login />} />
-          <Route path="/" element={<Login setUser={setUser} />} />
+          <Route
+            path="/"
+            element={<HomePage handleCartUpdate={handleCartUpdate} />}
+          />
+          <Route
+            path="/Cart"
+            element={
+              user ? <Cart handleCartUpdate={handleCartUpdate} /> : <Login />
+            }
+          />
+          <Route
+            path="/ReturnBook"
+            element={user ? <ReturnBook /> : <Login />}
+          />
+          <Route
+            path="/Login"
+            element={user ? <Navigate to="/" /> : <Login setUser={setUser} />}
+          />
         </Routes>
       </Box>
     </Box>

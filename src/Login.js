@@ -43,7 +43,7 @@ const Login = ({ setUser }) => {
         const user = querySnapshot.docs[0].data(); 
         setUser(user); 
         localStorage.setItem("user", JSON.stringify(user)); 
-        navigate("/HomePage"); 
+        navigate("/"); 
       } else {
         setError("USN not found. Please check and try again.");
       }
