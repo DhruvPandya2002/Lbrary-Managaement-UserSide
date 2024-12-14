@@ -174,7 +174,7 @@ const Cart = () => {
         <Button
           variant="outlined"
           color="secondary"
-          onClick={() => alert("Book Issued functionality will be added soon.")}
+          onClick={() => navigate("/borrowBooks")}
         >
           Book Issued
         </Button>

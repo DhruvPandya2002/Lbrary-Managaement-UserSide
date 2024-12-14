@@ -18,6 +18,7 @@ import HomePage from "./HomePage";
 import Login from "./Login";
 import Cart from "./Cart";
 import ReturnBook from "./ReturnBook";
+import BorrowBooks from "./borrowBooks";
 
 
 const App = ({ darkMode, toggleTheme }) => {
@@ -156,6 +157,10 @@ const App = ({ darkMode, toggleTheme }) => {
           <Route
             path="/ReturnBook"
             element={user ? <ReturnBook /> : <Login />}
+          />
+          <Route
+            path="/borrowBooks"
+            element={user ? <BorrowBooks /> : <Login />}
           />
           <Route
             path="/Login"
